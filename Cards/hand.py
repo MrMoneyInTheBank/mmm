@@ -27,8 +27,15 @@ class Hand:
         return hiddenCards
 
     def showHand(self, reveal: bool = False) -> None:
+        if reveal:
+            print("The hidden card(s) were:")
+        else:
+            print("The dealer has drawn the following cards.\n")
+
         for index, card in enumerate(self.cards):
             if self.hiddenCards[index] and not reveal:
                 print(f"{index + 1}. This card is hidden.")
             else:
                 print(f"{index + 1}. {card}")
+        if reveal:
+            print(f"\nThe hand value is {self.value}")

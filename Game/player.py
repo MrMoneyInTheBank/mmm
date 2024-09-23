@@ -5,10 +5,17 @@ from Market.market import Side
 class Player:
     def __init__(self, name: str, startingBalance: int) -> None:
         self.name = name
+        self.startingBalance = startingBalance
         self.balance = startingBalance
 
     @classmethod
-    def createPlayer(cls, name: str, startingBalance: int) -> "Player":
+    def createPlayer(cls) -> "Player":
+        name = input("Enter your name to start: ")
+        startingBalance = 500
+        try:
+            startingBalance = int(input("Enter playing amount: "))
+        except Exception:
+            print("Invalid amount. Alloting $500.")
         return Player(name, startingBalance)
 
     def setBalance(self, newBalance: int) -> None:
@@ -30,10 +37,10 @@ class Player:
         marginNeeded = size * (maximumHandValue - marketPrice)
 
         if side.name == "LONG" and self.getBalance() >= size * marketPrice:
-            self.deductBalance(marketPrice)
+            self.deductBalance(size * marketPrice)
             return True
         elif side.name == "SHORT" and self.getBalance() >= marginNeeded:
-            self.addBalance(marketPrice)
+            self.addBalance(size * marketPrice)
             return True
         else:
             print(f"{self.name} is unable to {side.name.lower()} at {marketPrice}.")

@@ -20,8 +20,8 @@ class Game:
         self.inPlay = False
 
     def playRound(self) -> None:
+        os.system("clear")
         hand = self.dealer.deal()
-        print("The dealer has drawn the following cards.\n")
         hand.showHand()
 
         quote = self.dealer.getQuote(hand)
@@ -33,19 +33,18 @@ class Game:
         print(
             f"\n{self.player.name} wants to{' do' if action == 'nothing' else ''} {action}.\n\n"
         )
-        print("The hidden card(s) were:")
         hand.showHand(reveal=True)
 
-        net: int = 0
-        acceptedTrade: bool = False
-        if action == "buy":
-            acceptedTrade |= self.player.makeBet(quote.ask.price, Side.LONG, size)
-            net = hand.value - quote.ask.price
-        elif action == "sell":
-            acceptedTrade |= self.player.makeBet(quote.bid.price, Side.SHORT, size)
-            net = quote.bid.price - hand.value
+        marketPrice = quote.ask.price if action == "buy" else quote.bid.price
+        side = Side.LONG if action == "buy" else Side.SHORT
 
-        self.roundResult(acceptedTrade, net)
+        net = (
+            hand.value - marketPrice if side == Side.LONG else marketPrice - hand.value
+        )
+        net *= size
+
+        acceptedTrade = self.player.makeBet(marketPrice, side, size)
+        self.roundResult(acceptedTrade, net, hand.value, side, size)
 
     def playGame(self) -> None:
         round = 0
@@ -57,6 +56,13 @@ class Game:
                 self.endGame()
 
             round += 1
+
+        print(f"Thank you for playing {self.player.name}.")
+        print(
+            f"You {'made' if self.player.getBalance() - self.player.startingBalance > 0 else 'lost'} ${abs( self.player.getBalance() - self.player.startingBalance )} ending up with ${self.player.getBalance()}."
+        )
+
+        input("\nPress Enter to close game.")
 
     def getPlayerAction(self) -> str:
         action = input("\nWhat would you like to do? (buy, sell, nothing): ").lower()
@@ -72,16 +78,23 @@ class Game:
             return int(input("How many lots do you want to trade: "))
         return 0
 
-    def roundResult(self, acceptedTrade: bool, net: int) -> None:
+    def roundResult(
+        self, acceptedTrade: bool, net: int, handValue: int, side: Side, size: int
+    ) -> None:
         if not acceptedTrade:
             print("Whoops, you lost your chance!")
-        elif net == 0:
-            print(f"\nYour balance is still: {self.player.getBalance()}")
         else:
-            self.player.addBalance(net)
-            print(
-                f"\nYou {'made' if net > 0 else 'lost'} ${net}. Your new balance is {self.player.getBalance()}"
-            )
+            if side == Side.LONG:
+                self.player.addBalance(handValue * size)
+            elif side == Side.SHORT:
+                self.player.addBalance(-handValue * size)
+
+            if net == 0:
+                print(f"\nYour balance is still: {self.player.getBalance()}")
+            else:
+                print(
+                    f"\nYou {'made' if net > 0 else 'lost'} ${net}. Your new balance is ${self.player.getBalance()}"
+                )
 
         input("Press Enter to continue...")
         os.system("clear")
