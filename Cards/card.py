@@ -29,9 +29,5 @@ class Card:
         self.rank = rank
         self.suit = suit
 
-    @classmethod
-    def createCard(cls, rank: Rank, suit: Suit) -> "Card":
-        return Card(rank, suit)
-
     def __repr__(self) -> str:
         return f"{self.rank.name} of {self.suit.value}"

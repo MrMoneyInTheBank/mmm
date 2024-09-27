@@ -9,10 +9,6 @@ class Hand:
         self.hiddenCards: List[bool] = self.hideCards()
         self.value = sum([card.rank.value for card in self.cards])
 
-    @classmethod
-    def createHand(cls, cards: List[Card]) -> "Hand":
-        return Hand(cards)
-
     def hideCards(self) -> List[bool]:
         shown = 0
         hiddenCards = [True for _ in range(len(self.cards))]

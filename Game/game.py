@@ -30,13 +30,11 @@ class Game:
         action = self.getPlayerAction()
         size = self.getPositionSize(action)
 
-        print(
-            f"\n{self.player.name} wants to{' do' if action == 'nothing' else ''} {action}.\n\n"
-        )
-        hand.showHand(reveal=True)
-
         marketPrice = quote.ask.price if action == "buy" else quote.bid.price
         side = Side.LONG if action == "buy" else Side.SHORT
+
+        self.printActionString(action, marketPrice, size)
+        hand.showHand(reveal=True)
 
         net = (
             hand.value - marketPrice if side == Side.LONG else marketPrice - hand.value
@@ -90,7 +88,7 @@ class Game:
                 self.player.addBalance(-handValue * size)
 
             if net == 0:
-                print(f"\nYour balance is still: {self.player.getBalance()}")
+                print(f"\nYour balance is still ${self.player.getBalance()}")
             else:
                 print(
                     f"\nYou {'made' if net > 0 else 'lost'} ${net}. Your new balance is ${self.player.getBalance()}"
@@ -98,3 +96,15 @@ class Game:
 
         input("Press Enter to continue...")
         os.system("clear")
+
+    def printActionString(self, action: str, marketPrice: int, size: int) -> None:
+        if action == "nothing":
+            print(f"\n{self.player.name} wants to sit this round out.\n")
+        elif action == "buy":
+            print(
+                f"\n{self.player.name} wants to buy {size} lot{'s' if size > 1 else ''} at {marketPrice}.\n"
+            )
+        elif action == "sell":
+            print(
+                f"\n{self.player.name} wants to sell {size} lot{'s' if size > 1 else ''} at {marketPrice}.\n"
+            )

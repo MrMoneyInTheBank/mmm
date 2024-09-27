@@ -13,7 +13,7 @@ class Player:
         name = input("Enter your name to start: ")
         startingBalance = 500
         try:
-            startingBalance = int(input("Enter playing amount: "))
+            startingBalance = int(input("Enter playing amount ($): "))
         except Exception:
             print("Invalid amount. Alloting $500.")
         return Player(name, startingBalance)

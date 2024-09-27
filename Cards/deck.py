@@ -14,9 +14,9 @@ class Deck:
 
         for rank in Rank:
             for suit in Suit:
-                deck.append(Card.createCard(rank, suit))
+                deck.append(Card(rank, suit))
 
         return Deck(deck)
 
     def drawThree(self) -> Hand:
-        return Hand.createHand(random.sample(self.deck, k=3))
+        return Hand(random.sample(self.deck, k=3))

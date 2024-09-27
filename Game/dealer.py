@@ -11,10 +11,6 @@ class Dealer:
     def __init__(self, deck: Optional[Deck] = None) -> None:
         self.deck = deck if deck else Deck.createDeck()
 
-    @classmethod
-    def createDealer(cls) -> "Dealer":
-        return Dealer()
-
     def deal(self) -> Hand:
         return self.deck.drawThree()
 
@@ -24,9 +20,9 @@ class Dealer:
         elif hand.value > EXPECTED_HAND_VALUE:
             tolerance = random.uniform(1.0, 1.5)
 
-        bid = Bid.createBid(math.floor(EXPECTED_HAND_VALUE - tolerance * VOLATILITY))
-        ask = Ask.createAsk(math.ceil(EXPECTED_HAND_VALUE - tolerance * VOLATILITY))
+        bid = Bid(math.floor(EXPECTED_HAND_VALUE - tolerance * VOLATILITY))
+        ask = Ask(math.ceil(EXPECTED_HAND_VALUE - tolerance * VOLATILITY))
 
-        quote = Quote.createQuote(bid, ask)
+        quote = Quote(bid, ask)
 
         return quote

@@ -5,7 +5,7 @@ from Game.game import Game
 
 if __name__ == "__main__":
     try:
-        dealer = Dealer.createDealer()
+        dealer = Dealer()
         player = Player.createPlayer()
         game = Game.createGame(dealer, player)
 
